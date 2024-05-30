@@ -36,7 +36,12 @@
 
                 <td>{{ $user->name}}</td>
                 @foreach($days as $day)
-                    @if($day['day']=='Sun' || $day['day']=='Sat')
+                    @php
+                       $data[$user->name]->toArray();
+                    @endphp
+                    {{ dd($data[$user->name]) }}
+                    <td>@if(isset($data[$user->name][$day]['in_time'])) {{ substr($data[$user->name][$day]['in_time'],0, strrpos($data[$user->name][$day]['in_time'], ":"))  }} - {{ substr($data[$user->name][$day]['out_time'],0, strrpos($data[$user->name][$day]['out_time'], ":"))  }} @endif </td>
+                    {{-- @if($day['day']=='Sun' || $day['day']=='Sat')
                     <td class='weekend'>
                         {{ $day['date'] }} 
                     </td>
@@ -50,7 +55,7 @@
                             @endforeach
                         @endif 
                     </td>
-                    @endif
+                    @endif --}}
                 @endforeach
             </tr>
         @endforeach
