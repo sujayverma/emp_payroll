@@ -18,7 +18,7 @@ return new class extends Migration
             $table->time('in_time');
             $table->time('out_time');
             $table->timestamps();
-            // $table->index(['id', 'user_id', 'attend_date']);
+            $table->index(['user_id', 'attend_date']);
         });
     }
 

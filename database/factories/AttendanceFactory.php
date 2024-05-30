@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Attendance;
+use App\Models\User;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Attendance>
@@ -16,14 +18,23 @@ class AttendanceFactory extends Factory
      */
     public function definition(): array
     {
+        
         $working_days = $this->get_working_days();
         $in_time = rand(8,10).':'.rand(0,60);
         $out_time = rand(13,19).':'.rand(0,60);
-        $date = date('Y-m-d',strtotime(date('Y').'-'.'3'.'-'.$working_days[rand(0,count($working_days)-1)]));
+        $user_id = $this->faker->randomElement(User::pluck('id')->toArray());
+        static $usedDates = [];
+        do {
+            $date = date('Y-m-d',strtotime(date('Y').'-'.'3'.'-'.$working_days[rand(0,count($working_days)-1)]));
+            $unique_key = $user_id . '-' . $date;
+        } while (in_array($unique_key, $usedDates));
+
+        $usedDates[] = $unique_key;
         $indate = date('Y-m-d',strtotime(date('Y').'-'.'3'.'-'.$working_days[rand(0,count($working_days)-1)])).' '.$in_time;
         $outdate = date('Y-m-d',strtotime(date('Y').'-'.'3'.'-'.$working_days[rand(0,count($working_days)-1)])).' '.$out_time;
         return [
             //
+            'user_id' => $user_id,
             'attend_date' => $date,
             'in_time' => date('H:i',strtotime($indate)),
             'out_time' => date('H:i',strtotime($outdate)),
