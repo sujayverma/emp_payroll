@@ -35,15 +35,12 @@ class AttendanceController extends Controller
         }
        
         $final_array = [];
-        // dd($day_arr);
         $users = $users = User::with(['attend' => function($query) {
             $query->orderBy('user_id', 'asc');
             $query->orderBy('attend_date', 'asc');
         }])->get();
-        // dd($users); exit;
         foreach($users as $user)
         {
-            // dd($user->attend); exit;
             $late = 0;
             $half_day= 0;
             $full_day = 0;
@@ -53,15 +50,12 @@ class AttendanceController extends Controller
 
                 foreach($user->attend as $attendance_details)
                 {
-                         
-                        // echo $day['date'].'___'.date('j',strtotime($attendance_details->attend_date));
-                        // dd( $attendance_details->attend_date); exit;
+                      
                         
                         if(in_array(date('j',strtotime($attendance_details->attend_date)),$day_arr))
                         {
 
                             $status = [];
-                            // echo $day['date'].'___'.date('j',strtotime($attendance_details->attend_date)).'HHH<br>';
                             $time1 = strtotime($attendance_details->out_time);
                             $time2 = strtotime($attendance_details->in_time);
                             $difference = round(abs($time2 - $time1) / 3600,2);
@@ -73,11 +67,11 @@ class AttendanceController extends Controller
                             if('09.31'> date("h.i", strtotime($attendance_details->in_time)) || '17.00'< date("h.i", strtotime($attendance_details->out_time)))
                             {
                                 $late++;
-                                $status['cell_color'] = 'Blue'; 
+                                $status['cell_color'] = 'late'; 
                             }
                             else if('18.00'<date("h.i", strtotime($attendance_details->out_time)))
                             {
-                                $status['cell_color'] = 'Blue';
+                                $status['cell_color'] = 'late';
                             }
                             elseif($difference == '4.00')
                             {
@@ -89,23 +83,16 @@ class AttendanceController extends Controller
                             }
                                 
                             $full_day++;
-                            
-                            // echo date("h.i", strtotime($attendance_details->in_time)); exit;
                         
                             if(!isset($final_array[$user->name][$attendance_details->attend_date]))
                             {
-                                // echo $day['date'].'___'.date('j',strtotime($attendance_details->attend_date)).'pp<br>';
+                               
                                 $final_array[$user->name][date('j',strtotime($attendance_details->attend_date))] = $status;
                             }
                                
                             
                         }
                        
-
-
-                        // echo $late;
-                        // $final_array[$user->name][$day['date']] = $status;
-                  
                     
                 }
 
@@ -121,17 +108,14 @@ class AttendanceController extends Controller
                         }
                         else
                         {
-                            $status['cell_color'] = 'Red';
+                            $status['cell_color'] = 'absent';
                         }
                         $final_array[$user->name][$day['date']] = $status;
-                        // sort($final_array[$user->name]);
                     }
 
                 }
                 
-               
-                
-            // exit;
+            
             $deduction = floor($late/4);
             $total = $full_day + $weekend + ($half_day*0.5) - $deduction;
             $final_array[$user->name]['full_day'] = $full_day;
@@ -143,7 +127,7 @@ class AttendanceController extends Controller
         }
 
         
-        echo '<pre>'.print_r($final_array,True).'</pre>'; exit;
+        
         return view('listing', $data=['users'=>$users, 'days'=>$workdays, 'data' => $final_array]);
     }
 }

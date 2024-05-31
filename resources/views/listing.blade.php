@@ -1,8 +1,9 @@
-{{-- {{ dd($users->attend) }} --}}
+
 <style type="text/css">
     td.weekend{background-color:rgb(212, 199, 25);}
-    /* tr.even{background-color:#fcf;}
-    table tr td:first-of-type {background-color: purple !important;} */
+    td.late{background-color:rgb(13, 105, 235);}
+    td.absent{background-color:rgb(212, 25, 25);}
+ 
     </style>
 <table border="1">
     <thead>
@@ -36,27 +37,15 @@
 
                 <td>{{ $user->name}}</td>
                 @foreach($days as $day)
-                    @php
-                       $data[$user->name]->toArray();
-                    @endphp
-                    {{ dd($data[$user->name]) }}
-                    <td>@if(isset($data[$user->name][$day]['in_time'])) {{ substr($data[$user->name][$day]['in_time'],0, strrpos($data[$user->name][$day]['in_time'], ":"))  }} - {{ substr($data[$user->name][$day]['out_time'],0, strrpos($data[$user->name][$day]['out_time'], ":"))  }} @endif </td>
-                    {{-- @if($day['day']=='Sun' || $day['day']=='Sat')
-                    <td class='weekend'>
-                        {{ $day['date'] }} 
-                    </td>
-                    @else
-                    <td >
-                        @if($user->attend)
-                            @foreach($user->attend as $att)
-                                @if(date('j',strtotime($att->attend_date)) == $day['date'])
-                                  {{ substr($att->in_time,0, strrpos($att->in_time, ":"))  }} - {{ substr($att->in_time,0, strrpos($att->out_time, ":"))  }}
-                                @endif
-                            @endforeach
-                        @endif 
-                    </td>
-                    @endif --}}
+                    
+                    <td class=" {{ $data[$user->name][$day['date']]['cell_color'] }} ">@if(isset($data[$user->name][$day['date']]['in_time'])) {{ substr($data[$user->name][$day['date']]['in_time'],0, strrpos($data[$user->name][$day['date']]['in_time'], ":"))  }} - {{ substr($data[$user->name][$day['date']]['out_time'],0, strrpos($data[$user->name][$day['date']]['out_time'], ":"))  }} @endif </td>
+                   
                 @endforeach
+                <td> {{ $data[$user->name]['full_day']}} </td>
+                <td> {{ $data[$user->name]['half_day']}} </td>
+                <td> {{ $data[$user->name]['weekend']}} </td>
+                <td> {{ $data[$user->name]['deduction']}} </td>  
+                <td> {{ $data[$user->name]['total']}} </td> 
             </tr>
         @endforeach
     </tbody>
